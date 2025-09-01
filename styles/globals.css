@@ -1,6 +1,9 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin 'tailwind-scrollbar';
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+}
 @custom-variant dark (&:is(.dark *));
 
 :root {

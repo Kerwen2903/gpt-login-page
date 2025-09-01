@@ -23,10 +23,18 @@ export interface Translations {
   captchaLoadFailed: string
   captchaNotFound: string
 
+  // Settings
   settings: string
   darkMode: string
   lightMode: string
   language: string
+
+  // Chat
+  newChat: string
+  chatHistory: string
+  noConversations: string
+  rename: string
+  delete: string
 }
 
 export const translations: Record<Language, Translations> = {
@@ -53,6 +61,11 @@ export const translations: Record<Language, Translations> = {
     darkMode: "Темная тема",
     lightMode: "Светлая тема",
     language: "Язык",
+    newChat: "Новый чат",
+    chatHistory: "История чатов",
+    noConversations: "Нет разговоров",
+    rename: "Переименовать",
+    delete: "Удалить",
   },
   tk: {
     loginTitle: "GPT hasabyňyza giriň",
@@ -77,6 +90,11 @@ export const translations: Record<Language, Translations> = {
     darkMode: "Garaňky tema",
     lightMode: "Açyk tema",
     language: "Dil",
+    newChat: "Täze söhbetdeşlik",
+    chatHistory: "Söhbetdeşlik taryhy",
+    noConversations: "Söhbetdeşlik ýok",
+    rename: "Adyny üýtget",
+    delete: "Poz",
   },
 }
 
