@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 
-const API_BASE_URL = "http://192.168.100.20:8000/api/v1";
-
 export async function GET() {
   try {
-    console.log("[v0] Fetching captcha from:", `${API_BASE_URL}/auth/captcha`);
+    console.log(
+      "[v0] Fetching captcha from:",
+      `${process.env.API_URL}/api/v1/auth/captcha`
+    );
 
-    const response = await fetch(`${API_BASE_URL}/auth/captcha`, {
+    const response = await fetch(`${process.env.API_URL}/api/v1/auth/captcha`, {
       method: "GET",
       headers: {
         "ngrok-skip-browser-warning": "true",

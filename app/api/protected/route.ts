@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const token = authHeader.substring(7);
 
     const response = await fetch(
-      "http://192.168.100.20:8000/api/v1/auth/protected",
+      `${process.env.API_URL}/api/v1/auth/protected`,
       {
         method: "GET",
         headers: {

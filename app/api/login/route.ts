@@ -1,13 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-const API_BASE_URL = "http://192.168.100.20:8000/api/v1";
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("[v0] Login request body:", body);
+    console.log("Login request body:", body);
 
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${process.env.API_URL}/api/v1/auth/login`, {
       method: "POST",
       headers: {
         "ngrok-skip-browser-warning": "true",
