@@ -5,7 +5,8 @@ import type React from "react";
 import { AuthGuard } from "@/components/auth-guard";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, MessageSquare, BarChart3 } from "lucide-react";
+import { SettingsMenu } from "@/components/settings-menu";
+import { LogOut, User, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 interface ProtectedLayoutProps {
@@ -21,7 +22,7 @@ export function ProtectedLayout({ children }: ProtectedLayoutProps) {
         <header className="border-b bg-card border-border">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center space-x-6">
-              <Link href="/dashboard" className="flex items-center space-x-3">
+              <Link href="/chat" className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <span className="text-lg font-bold text-primary-foreground">
                     G
@@ -33,16 +34,6 @@ export function ProtectedLayout({ children }: ProtectedLayoutProps) {
               </Link>
 
               <nav className="hidden md:flex items-center space-x-4">
-                <Link href="/dashboard">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-card-foreground"
-                  >
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Dashboard
-                  </Button>
-                </Link>
                 <Link href="/chat">
                   <Button
                     variant="ghost"
@@ -61,6 +52,7 @@ export function ProtectedLayout({ children }: ProtectedLayoutProps) {
                 <User className="h-4 w-4" />
                 <span>Welcome, {user?.name}</span>
               </div>
+              <SettingsMenu />
               <Button
                 variant="outline"
                 size="sm"
