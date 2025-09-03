@@ -1,38 +1,44 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, EyeOff, RefreshCw, Loader2 } from "lucide-react"
-import { useLanguage } from "@/hooks/use-language"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Eye, EyeOff, RefreshCw, Loader2 } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 interface LoginResponse {
-  message: string
+  message: string;
   user: {
-    id: number
-    name: string
-  }
-  access_token: string
-  refresh_token: string
+    id: number;
+    name: string;
+  };
+  access_token: string;
+  refresh_token: string;
 }
 
 export function LoginForm() {
-  const { t } = useLanguage()
-  const [showPassword, setShowPassword] = useState(false)
-  const [captchaId, setCaptchaId] = useState("")
-  const [captchaImageUrl, setCaptchaImageUrl] = useState("")
-  const [captchaInput, setCaptchaInput] = useState("")
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const { t } = useLanguage();
+  const [showPassword, setShowPassword] = useState(false);
+  const [captchaId, setCaptchaId] = useState("");
+  const [captchaImageUrl, setCaptchaImageUrl] = useState("");
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    loadCaptcha()
-  }, [])
+    loadCaptcha();
+  }, []);
 
   const loadCaptcha = async () => {
     try {
@@ -41,55 +47,64 @@ export function LoginForm() {
         headers: {
           Accept: "image/png",
         },
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `HTTP error! status: ${response.status}`
+        );
       }
 
-      const captchaIdFromHeader = response.headers.get("x-captcha-id")
-      console.log("[v0] Captcha ID from proxy:", captchaIdFromHeader)
+      const captchaIdFromHeader = response.headers.get("x-captcha-id");
+      console.log("[v0] Captcha ID from proxy:", captchaIdFromHeader);
 
       if (!captchaIdFromHeader) {
-        throw new Error(t("captchaNotFound"))
+        throw new Error(t("captchaNotFound"));
       }
 
-      setCaptchaId(captchaIdFromHeader)
+      setCaptchaId(captchaIdFromHeader);
 
-      const imageBlob = await response.blob()
-      const imageUrl = URL.createObjectURL(imageBlob)
-      setCaptchaImageUrl(imageUrl)
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setCaptchaImageUrl(imageUrl);
 
-      console.log("[v0] Captcha loaded successfully with ID:", captchaIdFromHeader)
+      console.log(
+        "[v0] Captcha loaded successfully with ID:",
+        captchaIdFromHeader
+      );
     } catch (error) {
-      console.error("[v0] Failed to load captcha:", error)
-      setError(`${t("captchaLoadFailed")}: ${error instanceof Error ? error.message : "Unknown error"}`)
+      console.error("[v0] Failed to load captcha:", error);
+      setError(
+        `${t("captchaLoadFailed")}: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
-  }
+  };
 
   const refreshCaptcha = async () => {
-    setCaptchaInput("")
-    setError("")
+    setCaptchaInput("");
+    setError("");
 
     if (captchaImageUrl) {
-      URL.revokeObjectURL(captchaImageUrl)
+      URL.revokeObjectURL(captchaImageUrl);
     }
 
-    await loadCaptcha()
-  }
+    await loadCaptcha();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
       console.log("[v0] Submitting login with:", {
         username,
         captchaId,
         captchaInput,
-      })
+      });
 
       const response = await fetch("/api/login", {
         method: "POST",
@@ -105,43 +120,48 @@ export function LoginForm() {
           captcha_solution: captchaInput,
           captcha_id: captchaId,
         }),
-      })
+      });
 
-      const responseData = await response.json()
+      const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.error || responseData.message || "Login failed")
+        throw new Error(
+          responseData.error || responseData.message || "Login failed"
+        );
       }
 
-      console.log("[v0] Login successful:", responseData)
+      console.log("[v0] Login successful:", responseData);
 
-      localStorage.setItem("access_token", responseData.access_token)
-      localStorage.setItem("refresh_token", responseData.refresh_token)
-      localStorage.setItem("user", JSON.stringify(responseData.user))
+      localStorage.setItem("access_token", responseData.access_token);
+      localStorage.setItem("refresh_token", responseData.refresh_token);
+      localStorage.setItem("user", JSON.stringify(responseData.user));
 
-      window.location.href = "/dashboard"
+      window.location.href = "/chat";
     } catch (error: any) {
-      console.error("[v0] Login failed:", error)
+      console.error("[v0] Login failed:", error);
 
-      if (error.message.includes("Invalid") || error.message.includes("captcha")) {
-        setError(t("invalidCredentials"))
+      if (
+        error.message.includes("Invalid") ||
+        error.message.includes("captcha")
+      ) {
+        setError(t("invalidCredentials"));
       } else {
-        setError(`${t("loginFailed")}: ${error.message}`)
+        setError(`${t("loginFailed")}: ${error.message}`);
       }
 
-      await refreshCaptcha()
+      await refreshCaptcha();
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     return () => {
       if (captchaImageUrl) {
-        URL.revokeObjectURL(captchaImageUrl)
+        URL.revokeObjectURL(captchaImageUrl);
       }
-    }
-  }, [captchaImageUrl])
+    };
+  }, [captchaImageUrl]);
 
   return (
     <Card className="w-full shadow-lg">
@@ -149,12 +169,20 @@ export function LoginForm() {
         <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4">
           <span className="text-2xl font-bold text-accent-foreground">G</span>
         </div>
-        <CardTitle className="text-2xl font-bold text-balance">{t("loginTitle")}</CardTitle>
-        <CardDescription className="text-muted-foreground">{t("loginDescription")}</CardDescription>
+        <CardTitle className="text-2xl font-bold text-balance">
+          {t("loginTitle")}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground">
+          {t("loginDescription")}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">{error}</div>}
+          {error && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="username" className="text-sm font-medium">
@@ -217,7 +245,9 @@ export function LoginForm() {
                     className="max-w-full max-h-full object-contain"
                   />
                 ) : (
-                  <div className="text-muted-foreground text-sm">{t("loadingCaptcha")}</div>
+                  <div className="text-muted-foreground text-sm">
+                    {t("loadingCaptcha")}
+                  </div>
                 )}
               </div>
               <Button
@@ -259,7 +289,10 @@ export function LoginForm() {
           </Button>
 
           <div className="text-center">
-            <Button variant="link" className="text-accent hover:text-accent/80 p-0">
+            <Button
+              variant="link"
+              className="text-accent hover:text-accent/80 p-0"
+            >
               {t("forgotPassword")}
             </Button>
           </div>
@@ -267,11 +300,14 @@ export function LoginForm() {
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
           {t("noAccount")}{" "}
-          <Button variant="link" className="text-accent hover:text-accent/80 p-0 h-auto font-normal">
+          <Button
+            variant="link"
+            className="text-accent hover:text-accent/80 p-0 h-auto font-normal"
+          >
             {t("signUpHere")}
           </Button>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

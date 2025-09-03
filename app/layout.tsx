@@ -21,7 +21,9 @@ export default function RootLayout({
     <html lang="ru">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <ThemeProvider defaultTheme="light">
-          <LanguageProvider defaultLanguage="ru">{children}</LanguageProvider>
+          <LanguageProvider defaultLanguage="ru">
+            {children}
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
